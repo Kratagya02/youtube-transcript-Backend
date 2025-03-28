@@ -6,6 +6,8 @@ const striptags = require("striptags");
 const cors = require("cors");
 const app = express();
 app.use(cors());
+const fetch = require("node-fetch");
+
 const PORT = process.env.PORT || 5000;
 
 const fetchData = async (url) => {
