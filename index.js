@@ -4,18 +4,18 @@ const axios = require("axios");
 const { find } = require("lodash");
 const striptags = require("striptags");
 const cors = require("cors");
+const fetch = (...args) => import('node-fetch').then(({ default: fetch }) => fetch(...args));
+
 const app = express();
 app.use(cors());
-const fetch = require("node-fetch");
-
-const PORT = process.env.PORT || 5000;
 
 const fetchData = async (url) => {
-  console.log(url)
-  if (typeof fetch === "function") {
+  console.log("Fetching:", url);
+  try {
     const response = await fetch(url);
     return await response.text();
-  } else {
+  } catch (error) {
+    console.error("Fetch error:", error.message);
     const { data } = await axios.get(url);
     return data;
   }
@@ -90,7 +90,4 @@ app.get("/subtitles", async (req, res) => {
   }
 });
 
-
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
+module.exports = app;
