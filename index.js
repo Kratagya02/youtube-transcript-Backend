@@ -8,14 +8,14 @@ const fetch = (...args) => import('node-fetch').then(({ default: fetch }) => fet
 
 const app = express();
 app.use(cors());
+const PORT = process.env.PORT || 5000;
 
 const fetchData = async (url) => {
-  console.log("Fetching:", url);
-  try {
+  console.log(url)
+  if (typeof fetch === "function") {
     const response = await fetch(url);
     return await response.text();
-  } catch (error) {
-    console.error("Fetch error:", error.message);
+  } else {
     const { data } = await axios.get(url);
     return data;
   }
@@ -78,16 +78,17 @@ app.get("/subtitles", async (req, res) => {
   const { videoID, lang } = req.query;
 
   if (!videoID) {
-    return res.status(400).json({ error: "videoID is required" });
+    return res.status(400).send({ error: "videoID is required" });
   }
 
   try {
     const subtitles = await getSubtitles({ videoID, lang });
-    res.status(200).json(subtitles);
+    res.json(subtitles);
   } catch (error) {
-    console.error("Error:", error.message);
-    res.status(500).json({ error: error.message });
+    res.status(500).send({ error: error.message });
   }
 });
 
-module.exports = app;
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+});
