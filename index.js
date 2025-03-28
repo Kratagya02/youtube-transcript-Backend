@@ -78,16 +78,18 @@ app.get("/subtitles", async (req, res) => {
   const { videoID, lang } = req.query;
 
   if (!videoID) {
-    return res.status(400).send({ error: "videoID is required" });
+    return res.status(400).json({ error: "videoID is required" });
   }
 
   try {
     const subtitles = await getSubtitles({ videoID, lang });
-    res.json(subtitles);
+    res.status(200).json(subtitles);
   } catch (error) {
-    res.status(500).send({ error: error.message });
+    console.error("Error:", error.message);
+    res.status(500).json({ error: error.message });
   }
 });
+
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
